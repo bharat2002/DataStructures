@@ -4,9 +4,11 @@ using namespace std;
 #include "Node.h"
 #include "../Interfaces/InsertionInterface.h"
 #include "../Interfaces/DeletionInterface.h"
-#include "../Interfaces/PrintableList.h"
+#include "../Iterators/Iterable.h"
+#include "../Iterators/ForwardIterator.h"
+
 template <typename T>
-class LinkedList: InsertionInterface<T>, DeletionInterface<T> {
+class LinkedList: public InsertionInterface<T>, public DeletionInterface<T> {
 private:
     Node<T>* head;
     Node<T>* tail;
@@ -40,7 +42,7 @@ public:
         return size;
     }
 
-    void addFirst(T val)
+    void addFirst(T val) override
     {
         Node<T>* newNode = new Node<T>(val);
         if (size == 0) {
@@ -53,7 +55,7 @@ public:
         size++;
     }
 
-    void addLast(T val)
+    void addLast(T val) override
     {
         Node<T>* newNode = new Node<T>(val);
         if (size == 0) {
@@ -66,7 +68,7 @@ public:
         size++;
     }
 
-    void addAt(int index, T val)
+    void addAt(int index, T val) override
     {
         if(index < 0 || index > size) {
             cout << "Index out of bounds" << endl;
@@ -96,7 +98,7 @@ public:
 
     }
 
-    void deleteFirst() {
+    void deleteFirst() override{
         if(size == 0) {
             cout << "List is empty" << endl;
             return;
@@ -112,7 +114,7 @@ public:
         }
     }
 
-    void deleteLast() {
+    void deleteLast() override {
         if(size == 0) {
             cout << "List is empty" << endl;
             return;
@@ -137,7 +139,7 @@ public:
         size--;
     }
 
-    void deleteAt(int index) {
+    void deleteAt(int index) override{
         if(index < 0 || index >= size) {
             cout << "Index out of bounds" << endl;
             return;
@@ -165,6 +167,38 @@ public:
         delete temp;
         size--;
     }
+    //Future scope : Implementing Iterator class for LinkedList
+    /*class Iterator : public ForwardIterator<Node<T>> {
+    private:
+        Node<T>* current;
+    public:
+        Iterator(Node<T>* start) : current(start) {}
 
+        bool hasNext() const override {
+            return current != nullptr;
+        }
+
+        T& next() override {
+            if (!hasNext()) {
+                throw out_of_range("No more elements");
+            }
+            T& value = current->getData();
+            current = current->getNext();
+            return value;
+        }
+    };
+
+    // Iterable interface methods
+    ForwardIterator<T>* begin() override {
+        return new Iterator(head);
+    }
+
+    ForwardIterator<T>* end() override {
+        return new Iterator(tail->getNext());
+    }
+
+    ForwardIterator<T>* createIterator() override {
+        return new Iterator(head);
+    }*/
 
 };
