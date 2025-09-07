@@ -23,7 +23,7 @@ public:
         data = val;
     }
 
-    T getData() {
+    T& getData() {
         return data;
     }
 

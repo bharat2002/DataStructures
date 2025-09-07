@@ -8,7 +8,7 @@ using namespace std;
 #include "../Iterators/ForwardIterator.h"
 
 template <typename T>
-class LinkedList: public InsertionInterface<T>, public DeletionInterface<T> {
+class LinkedList: public InsertionInterface<T>, public DeletionInterface<T>, public Iterable<T, ForwardIterator<T>> {
 private:
     Node<T>* head;
     Node<T>* tail;
@@ -168,18 +168,21 @@ public:
         size--;
     }
     //Future scope : Implementing Iterator class for LinkedList
-    /*class Iterator : public ForwardIterator<Node<T>> {
+    class Iterator : public ForwardIterator<T> {
     private:
         Node<T>* current;
     public:
         Iterator(Node<T>* start) : current(start) {}
 
         bool hasNext() const override {
-            return current != nullptr;
+            if(current == nullptr) {
+                return false;
+            }
+            return current->getNext() != nullptr;
         }
 
         T& next() override {
-            if (!hasNext()) {
+            if (!hasNext()) {                
                 throw out_of_range("No more elements");
             }
             T& value = current->getData();
@@ -199,6 +202,6 @@ public:
 
     ForwardIterator<T>* createIterator() override {
         return new Iterator(head);
-    }*/
+    }
 
 };
