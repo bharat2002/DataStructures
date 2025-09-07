@@ -1,0 +1,28 @@
+# CMake build files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+build/
+out/
+*.cbp
+*.user
+*.workspace
+*.project
+
+# Compiled object files and binaries
+*.o
+*.obj
+*.so
+*.dll
+*.exe
+*.out
+*.a
+*.lib
+
+# Other generated files
+*.log
+*.tmp
+
+# VSCode settings
+.vscode/
