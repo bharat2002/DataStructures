@@ -1,17 +1,17 @@
-// C++ program for insertion and
-// deletion in Circular Queue
+
 #include <iostream>
 using namespace std;
 
+template <typename T>
 class CircularQueue {
 private:
-    int *arr;        
+    T *arr;        
     int front, size; 
     int capacity;    
 
 public:
     CircularQueue(int c) {
-        arr = new int[c];
+        arr = new T[c];
         capacity = c;
         front = size = 0; 
     }
@@ -61,6 +61,4 @@ public:
     int getCapacity() const {
         return capacity;
     }
-
-
 };
