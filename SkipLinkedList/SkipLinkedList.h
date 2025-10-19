@@ -88,6 +88,31 @@ public:
         }
     }
 
+    int remove(int value)
+    {
+        Node* current = head;
+        Node* prev[SKIP_LST_MAX_LEVEL];
+        memset(prev, 0, sizeof(Node*) * SKIP_LST_MAX_LEVEL);
+        for (int i = currentLevel - 1; i >= 0; i--) {
+            while (current->forward[i] && current->forward[i]->value < value)
+            {
+                current = current->forward[i];
+            }
+            prev[i] = current;
+        }
+        
+        for(int i = 0; i < currentLevel; i++) {
+            if(prev[i] && prev[i]->forward[i] && prev[i]->forward[i]->value == value) {
+                prev[i]->forward[i] = prev[i]->forward[i]->forward[i];
+            }
+        }
+        
+        while(head->forward.at(currentLevel-1) == nullptr && currentLevel>1) {
+            currentLevel--;
+        }
+        
+        return 0; // Success
+    }
 
     void display() {
         if (head->forward[0] == nullptr) {

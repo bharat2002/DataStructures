@@ -9,9 +9,17 @@ int main() {
         list.display();
     }
     
-
-    list.search(40) ? std::cout << "Found 50\n" : std::cout << "50 Not Found\n";
-    list.search(99) ? std::cout << "Found 75\n" : std::cout << "75 Not Found\n";
-   
+    list.insert(50);
+    list.insert(75);
+    if(list.search(50)) {
+        std::cout << "50 found in the list.\n";
+    } else {
+        std::cout << "50 not found in the list.\n";
+    }
+    list.display();
+    list.remove(92);
+    list.display();
+    list.remove(34);
+    list.display();
     return 0;
 }
