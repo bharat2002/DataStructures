@@ -204,4 +204,45 @@ public:
         return new Iterator(head);
     }
 
+    bool FindCycle()
+    {
+        Node<T>* slow = head;
+        Node<T>* fast = head;
+
+        while(fast != nullptr && fast->getNext() != nullptr) {
+            slow = slow->getNext();
+            fast = fast->getNext()->getNext();
+
+            if(slow == fast) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void removeCycle()
+    {
+        if(!FindCycle()) {
+            return;
+        }
+
+        Node<T>* slow = head;
+        Node<T>* fast = head;
+
+        do {
+            slow = slow->getNext();
+            fast = fast->getNext()->getNext();
+        } while(slow != fast);
+
+        slow = head;
+        Node<T>* prev = nullptr;
+
+        while(slow != fast) {
+            prev = fast;
+            slow = slow->getNext();
+            fast = fast->getNext();
+        }
+
+        prev->setNext(nullptr);
+    }
 };
