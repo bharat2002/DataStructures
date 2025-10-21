@@ -2,6 +2,7 @@
 #include <vector>
 #include <stdexcept>
 #include <mutex>
+#include <atomic>
 class QueueInterface {
 public:
     virtual void enqueue(int value) = 0;
@@ -231,5 +232,48 @@ public:
     size_t size() const override {
         std::lock_guard<std::mutex> lock(mtx);
         return data.size();
+    }
+};
+
+//ThreadSafe Circular queue ring buffer
+
+
+class SPSCQueue {
+private:
+    int* __arr;
+    std::atomic<size_t> __head;
+    std::atomic<size_t> __tail;
+    size_t __capacity;
+
+public:
+    explicit SPSCQueue(size_t capacity)
+        : __head(0), __tail(0), __capacity(capacity) {
+        __arr = new int[capacity];
+    }
+
+    ~SPSCQueue() {
+        delete[] __arr;
+    }
+
+    bool enqueue(int value) {
+        size_t tail = __tail.load(std::memory_order_relaxed);
+        size_t nextTail = (tail + 1) % __capacity;
+
+        if (nextTail == __head.load(std::memory_order_acquire))
+            return false; // queue full
+
+        __arr[tail] = value;
+        __tail.store(nextTail, std::memory_order_release);
+        return true;
+    }
+
+    std::optional<int> dequeue() {
+        size_t head = __head.load(std::memory_order_relaxed);
+        if (head == __tail.load(std::memory_order_acquire))
+            return std::nullopt; // queue empty
+
+        int value = __arr[head];
+        __head.store((head + 1) % __capacity, std::memory_order_release);
+        return value;
     }
 };

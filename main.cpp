@@ -3,6 +3,8 @@
 #include <vector>
 #include <chrono>
 #include <atomic>
+#include <iomanip>   // for std::fixed, std::setprecision
+#include <sstream>   // for std::ostringstream
 #include "Queue/Queue.h" // Your queue interface and ThreadSafeQueue implementation
 
 using namespace std;
@@ -29,10 +31,25 @@ void consumer(QueueInterface* queue, int numOps) {
     }
 }
 
+// Helper function to format throughput nicely
+string formatThroughput(double opsPerSec) {
+    ostringstream oss;
+    oss << fixed << setprecision(2);
+    if (opsPerSec >= 1e9)
+        oss << (opsPerSec / 1e9) << " billion ops/sec";
+    else if (opsPerSec >= 1e6)
+        oss << (opsPerSec / 1e6) << " million ops/sec";
+    else if (opsPerSec >= 1e3)
+        oss << (opsPerSec / 1e3) << " thousand ops/sec";
+    else
+        oss << opsPerSec << " ops/sec";
+    return oss.str();
+}
+
 int main() {
-    const int NUM_PRODUCERS = 8;     // number of producer threads
-    const int NUM_CONSUMERS = 8;     // number of consumer threads
-    const int OPS_PER_THREAD = 1000000; // enqueue/dequeue ops per thread
+    const int NUM_PRODUCERS = 1;
+    const int NUM_CONSUMERS = 1;
+    const int OPS_PER_THREAD = 10000000;
 
     QueueInterface* queue = new ThreadSafeQueue();
 
@@ -50,14 +67,12 @@ int main() {
     vector<thread> producers, consumers;
 
     // Launch producers
-    for (int i = 0; i < NUM_PRODUCERS; ++i) {
+    for (int i = 0; i < NUM_PRODUCERS; ++i)
         producers.emplace_back(producer, queue, OPS_PER_THREAD);
-    }
 
     // Launch consumers
-    for (int i = 0; i < NUM_CONSUMERS; ++i) {
+    for (int i = 0; i < NUM_CONSUMERS; ++i)
         consumers.emplace_back(consumer, queue, OPS_PER_THREAD);
-    }
 
     // Join all threads
     for (auto& t : producers) t.join();
@@ -69,9 +84,10 @@ int main() {
     long long totalOps = (NUM_PRODUCERS + NUM_CONSUMERS) * OPS_PER_THREAD;
     double opsPerSec = (totalOps / duration) * 1000.0;
 
-    cout << "Total operations: " << totalOps << endl;
-    cout << "Total time: " << duration << " ms" << endl;
-    cout << "Throughput: " << opsPerSec << " ops/sec" << endl;
+    cout << "\nResults:" << endl;
+    cout << "  Total operations : " << totalOps << endl;
+    cout << "  Total time        : " << duration << " ms" << endl;
+    cout << "  Throughput        : " << formatThroughput(opsPerSec) << endl;
 
     delete queue;
     return 0;
